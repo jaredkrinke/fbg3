@@ -6,7 +6,8 @@
     "test": "test"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "gulp test",
+    "watch": "gulp watch"
   },
   "license": "MIT",
   "devDependencies": {
