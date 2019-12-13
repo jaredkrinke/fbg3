@@ -1,0 +1,19 @@
+{
+  "name": "fbg-lib",
+  "version": "1.0.0",
+  "description": "Falling Block Game core library",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "assert": "^2.0.0",
+    "mocha": "^6.2.2"
+  },
+  "dependencies": {
+    "lz-string": "^1.4.4"
+  }
+}
