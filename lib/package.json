@@ -11,6 +11,7 @@
   "license": "MIT",
   "devDependencies": {
     "assert": "^2.0.0",
+    "gulp": "^4.0.2",
     "mocha": "^6.2.2"
   },
   "dependencies": {
