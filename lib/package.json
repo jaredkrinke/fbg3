@@ -16,6 +16,7 @@
     "mocha": "^6.2.2"
   },
   "dependencies": {
-    "lz-string": "^1.4.4"
+    "lz-string": "^1.4.4",
+    "xorwow-js": "https://github.com/jaredkrinke/xorwow-js.git"
   }
 }
