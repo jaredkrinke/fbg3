@@ -11,7 +11,7 @@
   "license": "MIT",
   "dependencies": {
     "lz-string": "^1.4.4",
-    "xorwow-ts": "https://github.com/jaredkrinke/xorwow-ts.git#v2.0.1"
+    "xorwow-js": "https://github.com/jaredkrinke/modules.git#xorwow-js-2.0.0"
   },
   "devDependencies": {
     "@types/mocha": "^5.2.7",

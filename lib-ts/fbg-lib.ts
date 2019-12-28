@@ -1,4 +1,4 @@
-import Xorwow from "xorwow-ts";
+import Xorwow from "xorwow-js";
 import * as LZString from "lz-string";
 
 export const boardWidth = 10;
