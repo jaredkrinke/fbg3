@@ -1,0 +1,23 @@
+{
+  "name": "fbg-lib",
+  "version": "1.0.0",
+  "description": "Falling Block Game core library",
+  "main": "fbg-lib.ts",
+  "scripts": {
+    "test": "mocha --require ts-node/register *.spec.ts",
+    "watch:test": "npx mocha --watch --require ts-node/register *.spec.ts --watch --watch-extensions ts"
+  },
+  "author": "Jared Krinke",
+  "license": "MIT",
+  "dependencies": {
+    "lz-string": "^1.4.4",
+    "xorwow-ts": "https://github.com/jaredkrinke/xorwow-ts.git#v2.0.1"
+  },
+  "devDependencies": {
+    "@types/mocha": "^5.2.7",
+    "assert": "^2.0.0",
+    "mocha": "^6.2.2",
+    "ts-node": "^8.5.4",
+    "typescript": "^3.7.4"
+  }
+}
