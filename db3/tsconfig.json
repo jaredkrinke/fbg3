@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "ES2017",
+        "resolveJsonModule": true,
+    },
+    "files": [
+        "functions/addscore/addscore.ts"
+    ]
+}
