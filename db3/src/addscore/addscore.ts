@@ -24,7 +24,7 @@ const validateScore = Slambda.createValidator<Score>({
     seed: createStringValidator(/^[0-9a-f]{32}$/),
     host: createStringValidator(/^[a-z]{15}$/),
     initials: createStringValidator(/^[a-z]{3}$/),
-    score: createNumberValidator(0, maxScore), 
+    score: createNumberValidator(0, maxScore),
 
     replay: (x: any): string => {
         if (typeof(x) === "string" && base64Pattern.test(x) && LZString.decompressFromBase64(x).length >= 6) {
