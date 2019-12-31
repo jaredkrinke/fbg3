@@ -3,8 +3,10 @@
         "module": "commonjs",
         "target": "ES2017",
         "resolveJsonModule": true,
+        "outDir": "functions"
     },
     "files": [
-        "functions/addscore/addscore.ts"
+        "src/addscore/addscore.ts",
+        "src/topscores/topscores.ts"
     ]
 }
