@@ -1,7 +1,9 @@
 import * as LZString from "lz-string";
 import * as Firebase from "firebase-admin";
 import * as fbc from "fbc";
-import { createStringValidator, createNumberValidator, createValidator, createJsonAsTextHandler } from "slambda";
+import * as Slambda from "slambda";
+
+const { createStringValidator, createNumberValidator } = Slambda;
 
 // Input validation
 // Note: If this gets obscured, this logic will probably need to change
@@ -17,7 +19,7 @@ interface Score {
     replay: string;
 }
 
-const validateScore = createValidator<Score>({
+const validateScore = Slambda.createValidator<Score>({
     mode: createNumberValidator(1, 3),
     seed: createStringValidator(/^[0-9a-f]{32}$/),
     host: createStringValidator(/^[a-z]{15}$/),
@@ -61,7 +63,13 @@ function scoreDocumentFromScore(record: Score): ScoreDocument {
     }
 }
 
-export const handler = createJsonAsTextHandler<Score, object>(validateScore, async (score) => {
-    await root.doc(score.seed).set(scoreDocumentFromScore(score));
-    return {};
+export const handler = Slambda.createHandler<Score, {}>({
+    method: "POST",
+    validate: validateScore,
+    createHeaders: Slambda.createCorsWildcardHeaders,
+
+    handle: async (score) => {
+        await root.doc(score.seed).set(scoreDocumentFromScore(score));
+        return {};
+    },
 });

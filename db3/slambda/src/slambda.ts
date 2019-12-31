@@ -10,7 +10,7 @@ export const statusCode = {
     internalServerError: 500,
 };
 
-// Validation library
+// Validation helpers
 export function createStringValidator(pattern: RegExp): (x: any) => string {
     return function (x) {
         if (typeof(x) === "string" && pattern.test(x)) {
@@ -72,53 +72,57 @@ export function createValidator<T>(validator: ValidatorMap<T>): (input: object) 
     };
 }
 
-// TODO: Where is the method exposed? Need to validate that...
-export function createJsonAsTextHandler<TRequest, TResponse>(validate: (input: object) => TRequest, handle: (record: TRequest) => Promise<TResponse>): AwsLambda.APIGatewayProxyHandler {
-    const f: AwsLambda.APIGatewayProxyHandler = async (request) => {
-        try {
-            const record = validate(JSON.parse(request.body));
-            try {
-                const response = await handle(record);
-                return {
-                    statusCode: statusCode.ok,
-                    headers: {
-                        // Allow Cross-Origin Resource Sharing
-                        // TODO: Allow configuring CORS
-                        "Access-Control-Allow-Origin": "*",
-                    },
-                    body: JSON.stringify(response),
-                };
-            } catch (err) {
-                if (trace) {
-                    console.error(err);
-                }
-                return { statusCode: statusCode.internalServerError, body: "" };
-            }
-        } catch (err) {
-            if (trace) {
-                console.error(err);
-            }
-            return { statusCode: statusCode.badRequest, body: "" }
-        }
-    }
-    return f;
+// Handler helpers
+type Method = "GET" | "PUT" | "POST" | "DELETE";
+
+export function parseTextBody(request: AwsLambda.APIGatewayProxyEvent): object {
+    return JSON.parse(request.body);
 }
 
-// TODO: Consolidate
-export function createJsonAsTextGetHandler<TRequest, TResponse>(validate: (input: object) => TRequest, handle: (record: TRequest) => Promise<TResponse>): AwsLambda.APIGatewayProxyHandler {
-    const f: AwsLambda.APIGatewayProxyHandler = async (request) => {
+export function parseQueryString(request: AwsLambda.APIGatewayProxyEvent): object {
+    return request.queryStringParameters;
+}
+
+export type Headers = {
+    [header: string]: boolean | number | string;
+};
+
+export function createEmptyHeaders(): undefined {
+    return undefined;
+}
+
+export function createCorsWildcardHeaders(): Headers {
+    return {
+        "Access-Control-Allow-Origin": "*",
+    };
+}
+
+export interface CreateHandlerOptions<TRequest, TResponse> {
+    method?: Method;
+    validate: (input: object) => TRequest;
+    handle: (record: TRequest) => Promise<TResponse>;
+    parse?: (request: AwsLambda.APIGatewayProxyEvent) => object;
+    createHeaders?: () => Headers | undefined;
+}
+
+export function createHandler<TRequest, TResponse>(options: CreateHandlerOptions<TRequest, TResponse>): AwsLambda.APIGatewayProxyHandler {
+    const { validate, handle } = options;
+    const method = options.method || "GET";
+    const parse = options.parse || parseTextBody;
+    const createHeaders = options.createHeaders || createEmptyHeaders;
+
+    return async (event) => {
         try {
-            const record = validate(request.queryStringParameters);
+            if (event.httpMethod !== method) {
+                throw new Error("Incorrect method");
+            }
+
+            const request = validate(parse(event));
             try {
-                const response = await handle(record);
+                const response = await handle(request);
                 return {
                     statusCode: statusCode.ok,
-                    // TODO: Not needed for GET, right?
-                    headers: {
-                        // Allow Cross-Origin Resource Sharing
-                        // TODO: Allow configuring CORS
-                        "Access-Control-Allow-Origin": "*",
-                    },
+                    headers: createHeaders(),
                     body: JSON.stringify(response),
                 };
             } catch (err) {
@@ -134,5 +138,4 @@ export function createJsonAsTextGetHandler<TRequest, TResponse>(validate: (input
             return { statusCode: statusCode.badRequest, body: "" }
         }
     }
-    return f;
 }

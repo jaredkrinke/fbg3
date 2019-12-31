@@ -1,14 +1,21 @@
 import * as Firebase from "firebase-admin";
 import * as fbc from "fbc";
-import { createNumberValidator, createValidator, createJsonAsTextGetHandler } from "slambda";
+import * as Slambda from "slambda";
 
 // Input validation
 interface TopScoresRequest {
     mode: number;
 }
 
-const validateTopScoresRequest = createValidator<TopScoresRequest>({
-    mode: createNumberValidator(1, 3),
+interface TopScore {
+    initials: string;
+    score: number;
+}
+
+type TopScoresResponse = TopScore[];
+
+const validateTopScoresRequest = Slambda.createValidator<TopScoresRequest>({
+    mode: Slambda.createNumberValidator(1, 3),
 });
 
 // Database integration
@@ -18,16 +25,23 @@ const root = Firebase
     .firestore()
     .collection("fbg-scores");
 
-export const handler = createJsonAsTextGetHandler<TopScoresRequest, object>(validateTopScoresRequest, async (request) => {
-    const records = await root
-        .where("mode", "==", request.mode)
-        .select("initials", "score")
-        .orderBy("score", "desc")
-        .limit(10)
-        .get();
+export const handler = Slambda.createHandler<TopScoresRequest, TopScoresResponse>({
+    method: "GET",
+    parse: Slambda.parseQueryString,
+    validate: validateTopScoresRequest,
+    createHeaders: Slambda.createCorsWildcardHeaders,
 
-    let response = [];
-    records.forEach(doc => response.push(doc.data()));
+    handle: async (request) => {
+        const records = await root
+            .where("mode", "==", request.mode)
+            .select("initials", "score")
+            .orderBy("score", "desc")
+            .limit(10)
+            .get();
 
-    return response;
+        let response: TopScoresResponse = [];
+        records.forEach(doc => response.push(doc.data() as TopScore));
+
+        return response;
+    },
 });
