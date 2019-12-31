@@ -45,6 +45,7 @@ interface ScoreDocument {
     host: string;
     initials: string;
     score: number;
+    timestamp: Firebase.firestore.Timestamp;
     replay: Buffer;
 }
 
@@ -55,6 +56,7 @@ function scoreDocumentFromScore(record: Score): ScoreDocument {
         host,
         initials,
         score,
+        timestamp: Firebase.firestore.Timestamp.now(),
         replay: Buffer.from(record.replay),
     }
 }

@@ -19,6 +19,15 @@ const root = Firebase
     .collection("fbg-scores");
 
 export const handler = createJsonAsTextGetHandler<TopScoresRequest, object>(validateTopScoresRequest, async (request) => {
-    console.log(`Top scores for mode: ${request.mode}`);
-    return {};
+    const records = await root
+        .where("mode", "==", request.mode)
+        .select("initials", "score")
+        .orderBy("score", "desc")
+        .limit(10)
+        .get();
+
+    let response = [];
+    records.forEach(doc => response.push(doc.data()));
+
+    return response;
 });
