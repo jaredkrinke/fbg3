@@ -1,7 +1,8 @@
 import * as LZString from "lz-string";
 import * as Firebase from "firebase-admin";
-import * as fbc from "fbc";
 import * as Slambda from "slambda";
+import * as sharedData from "shared-data";
+import * as fbc from "fbc";
 
 const { createStringValidator, createNumberValidator } = Slambda;
 
@@ -39,7 +40,7 @@ const validateScore = Slambda.createValidator<Score>({
 const root = Firebase
     .initializeApp({ credential: Firebase.credential.cert(fbc as Firebase.ServiceAccount) }, "addscore")
     .firestore()
-    .collection("fbg-scores");
+    .collection(sharedData.collection);
 
 interface ScoreDocument {
     // Document name is the seed

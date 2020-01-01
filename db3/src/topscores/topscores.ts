@@ -1,6 +1,7 @@
 import * as Firebase from "firebase-admin";
-import * as fbc from "fbc";
 import * as Slambda from "slambda";
+import * as sharedData from "shared-data";
+import * as fbc from "fbc";
 
 // Input validation
 interface TopScoresRequest {
@@ -19,11 +20,10 @@ const validateTopScoresRequest = Slambda.createValidator<TopScoresRequest>({
 });
 
 // Database integration
-// TODO: Share collection name!
 const root = Firebase
     .initializeApp({ credential: Firebase.credential.cert(fbc as Firebase.ServiceAccount) }, "topscores")
     .firestore()
-    .collection("fbg-scores");
+    .collection(sharedData.collection);
 
 export const handler = Slambda.createHandler<TopScoresRequest, TopScoresResponse>({
     method: "GET",
