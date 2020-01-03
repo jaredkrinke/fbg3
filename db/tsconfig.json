@@ -6,7 +6,8 @@
         "outDir": "functions"
     },
     "files": [
-        "src/addscore/addscore.ts",
-        "src/topscores/topscores.ts"
+        "src/addscore.ts",
+        "src/addscore.ts",
+        "src/topscores.ts"
     ]
 }
