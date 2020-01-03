@@ -2,3 +2,4 @@ functions
 fbc
 dist
 .netlify
+*.swp
