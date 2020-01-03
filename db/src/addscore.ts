@@ -70,6 +70,7 @@ export const handler = Slambda.createHandler<Score, {}>({
     createHeaders: Slambda.createCorsWildcardHeaders,
 
     handle: async (score) => {
+        console.log(`New score (mode ${score.mode}): ${score.score}`);
         await root.doc(score.seed).set(scoreDocumentFromScore(score));
         return {};
     },
