@@ -25,10 +25,20 @@ const mode = fbg.GameMode.endless;
 const initialLevel = 9;
 const game = new fbg.Game(mode, initialLevel, [seeds[0], seeds[1], seeds[2], seeds[3]]);
 
+// TODO: Enum for pieces to ensure this covers the set
+const colors = [
+    "red",
+    "cyan",
+    "yellow",
+    "lime",
+    "green",
+    "magenta",
+    "orange",
+];
+
 function render(): void {
-    context.fillStyle = "white";
-    context.fillRect(0, 0, fbg.boardWidth, fbg.boardHeight);
     context.fillStyle = "black";
+    context.fillRect(0, 0, fbg.boardWidth, fbg.boardHeight);
 
     const state = game.getState();
     const board = state.board;
@@ -36,6 +46,7 @@ function render(): void {
         const row = board[i];
         for (let j = 0; j < row.length; j++) {
             if (row[j] !== 0) {
+                context.fillStyle = colors[row[j] - 1];
                 context.fillRect(j, i, 1, 1);
             }
         }
@@ -45,6 +56,7 @@ function render(): void {
     if (piece) {
         const x0 = state.pieceColumn;
         const y0 = state.pieceRow;
+        context.fillStyle = colors[state.pieceIndex];
         for (let i = 0; i < piece.length; i++) {
             const offsets = piece[i];
             const x = offsets[0];
