@@ -15,6 +15,10 @@ const validateTopScoresParameters = Validize.createValidator<Contract.TopScoresR
     mode: validateMode,
 });
 
+const validateTopScoresQuery = Validize.createValidator<Contract.TopScoresRequestQuery>({
+    includeSeeds: Validize.createOptionalValidator(Validize.createBooleanValidator(true)),
+});
+
 const validateAddScoreParameters = Validize.createValidator<Contract.AddScoreRequestParameters>({
     mode: validateMode,
     seed: validateSeed,
@@ -41,12 +45,16 @@ router
     .get(
         Contract.TopScoresRoute,
         Validize.validate((context) => {
-            context.validated = validateTopScoresParameters(context.params);
+            context.validated = {
+                parameters: validateTopScoresParameters(context.params),
+                query: validateTopScoresQuery(context.query),
+            };
         }),
         (context) => {
-            const parameters: Contract.TopScoresRequestParameters = context.validated;
+            const parameters: Contract.TopScoresRequestParameters = context.validated.parameters;
+            const query: Contract.TopScoresRequestQuery = context.validated.query;
             context.status = 200;
-            context.body = `Here are the top scores for mode ${parameters.mode}`;
+            context.body = `Here are the top scores for mode ${parameters.mode} (include scores: ${query.includeSeeds === true})`;
         })
 
     .post(

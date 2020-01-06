@@ -3,7 +3,10 @@ export const TopScoresRoute = "/scores/:mode"; // GET
 export interface TopScoresRequestParameters {
     mode: number;
 }
-// TODO: Consider optional flag to retrieve seeds...
+
+export interface TopScoresRequestQuery {
+    includeSeeds: boolean | undefined;
+}
 
 export interface TopScore {
     initials: string;

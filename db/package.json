@@ -18,7 +18,7 @@
     "serverless-http": "^2.3.0",
     "shared-data": "./shared-data",
     "slambda": "https://github.com/jaredkrinke/modules.git#slambda-0.1.2",
-    "validize": "https://github.com/jaredkrinke/modules.git#validize-1.0.0"
+    "validize": "https://github.com/jaredkrinke/modules.git#validize-1.2.0"
   },
   "devDependencies": {
     "@types/koa-bodyparser": "^4.3.0",
