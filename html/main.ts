@@ -148,13 +148,24 @@ function showReplay(replayString: string) {
 }
 
 const apiEndpoint = "http://localhost:8888/.netlify/functions/api"; // Local test server
+function getModeUrl(mode: number) {
+    return `${apiEndpoint}/scores/${encodeURIComponent(mode)}`;
+}
+
+function getScoresWithSeedsUrl(mode: number) {
+    return `${getModeUrl(mode)}?includeSeeds=true`;
+}
+
 function getScoreUrl(mode: number, seed: string) {
-    return `${apiEndpoint}/scores/${encodeURIComponent(mode)}/${encodeURIComponent(seed)}`;
+    return `${getModeUrl(mode)}/${encodeURIComponent(seed)}`;
 }
 
 const parameters = new URLSearchParams(window.location.search);
 if (parameters.has("mode") && parameters.has("seed")) {
     // Replay
+    $("#table").hide();
+    $("#game").show();
+
     const mode = parseInt(parameters.get("mode"));
     const seed = parameters.get("seed");
     $.ajax({
@@ -164,4 +175,29 @@ if (parameters.has("mode") && parameters.has("seed")) {
     }).then((data) => {
         showReplay(data.replay);
     });
+} else {
+    // Leaderboard
+    $("#table").show();
+    $("#game").hide();
+
+    // TODO: Should be 3 different tables...
+    const template = $(".tableRowTemplate").hide();
+    for (let mode = 1; mode <= 3; mode++) {
+        $.ajax({
+            method: "GET",
+            url: getScoresWithSeedsUrl(mode),
+            dataType: "json",
+        }).then((data) => {
+            console.log(data);
+            for (let row of data) {
+                template
+                    .clone()
+                    .insertBefore(template)
+                    .show()
+                    .find('.tableMode').text(mode).end()
+                    .find('.tableInitials').text(row.initials).end()
+                    .find('.tableScore').html(`<a href="index.html?mode=${mode}&seed=${row.seed}">${row.score}</a>`).end();
+            }
+        });
+    }
 }

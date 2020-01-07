@@ -7,16 +7,24 @@
     </head>
     <body>
         <h1>FBG Spy</h1>
-        <div class="horizontal">
-            <canvas id="canvas" width="200" height="400" tabindex="1"></canvas>
-            <div class="vertical">
-                <p>Next</p>
-                <canvas id="canvasNext" width="80" height="80"></canvas>
-            </div>
+        <div id="chart">
+            <table id="table">
+                <tr><th>Mode</th><th>Initials</th><th>Score</th></tr>
+                <tr class="tableRowTemplate"><td class="tableMode"></td><td class="tableInitials"></td><td class="tableScore"></td></tr>
+            </table>
         </div>
-        <p>Level: <span id="level"></span></p>
-        <p>Lines: <span id="lines"></span></p>
-        <p>Score: <span id="score"></span></p>
+        <div id="game">
+            <div class="horizontal">
+                <canvas id="canvas" width="200" height="400" tabindex="1"></canvas>
+                <div class="vertical">
+                    <p>Next</p>
+                    <canvas id="canvasNext" width="80" height="80"></canvas>
+                </div>
+            </div>
+            <p>Level: <span id="level"></span></p>
+            <p>Lines: <span id="lines"></span></p>
+            <p>Score: <span id="score"></span></p>
+        </div>
         <pre id="log"></pre>
         <script src="./main.ts"></script>
     </body>
