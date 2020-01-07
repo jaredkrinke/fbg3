@@ -1,3 +1,16 @@
-#canvas {
+canvas {
     border: 1px solid black;
+    margin: 0.5em;
+}
+
+div.horizontal {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+div.vertical {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }

@@ -32,6 +32,9 @@ export interface GameState {
     pieceColumn: number;
     pieceIndex: number;
 
+    pieceNext: number[][];
+    pieceNextIndex: number;
+
     level: number;
     lines: number;
     score: number;
@@ -232,8 +235,10 @@ export class Game {
             pieceRow: this.pieceRow,
             pieceColumn: this.pieceColumn,
             pieceIndex: this.pieceIndex,
-            // pieceNext: Game.pieces[this.pieceNextIndex][0],
-            // pieceNextIndex: this.pieceNextIndex,
+
+            pieceNext: (this.pieceNextIndex >= 0) ? Game.pieces[this.pieceNextIndex][0] : null,
+            pieceNextIndex: this.pieceNextIndex,
+
             level: this.level,
             lines: this.lines,
             score: this.score,

@@ -4,6 +4,9 @@ declare const $: typeof import("jquery");
 const canvas = document.getElementById("canvas") as HTMLCanvasElement;
 const context = canvas.getContext("2d");
 
+const canvasNext = document.getElementById("canvasNext") as HTMLCanvasElement;
+const contextNext = canvasNext.getContext("2d");
+
 const spans = {
     level: document.getElementById("level"),
     lines: document.getElementById("lines"),
@@ -13,6 +16,10 @@ const spans = {
 const scale = canvas.width / 10;
 context.translate(0, canvas.height);
 context.scale(scale, -scale);
+
+contextNext.translate(0, canvasNext.height);
+contextNext.scale(scale, -scale);
+
 
 const log = document.getElementById("log");
 function trace(message: string): void {
@@ -35,6 +42,16 @@ const colors = [
     "orange",
 ];
 
+function drawPiece(context: CanvasRenderingContext2D, piece: number[][], pieceIndex: number, x0: number, y0: number) {
+    context.fillStyle = colors[pieceIndex];
+    for (let i = 0; i < piece.length; i++) {
+        const offsets = piece[i];
+        const x = offsets[0];
+        const y = offsets[1];
+        context.fillRect(x0 + x, y0 + y, 1, 1);
+    }
+}
+
 function render(state: fbg.GameState): void {
     context.fillStyle = "black";
     context.fillRect(0, 0, fbg.boardWidth, fbg.boardHeight);
@@ -52,15 +69,16 @@ function render(state: fbg.GameState): void {
 
     const piece = state.piece;
     if (piece) {
-        const x0 = state.pieceColumn;
-        const y0 = state.pieceRow;
-        context.fillStyle = colors[state.pieceIndex];
-        for (let i = 0; i < piece.length; i++) {
-            const offsets = piece[i];
-            const x = offsets[0];
-            const y = offsets[1];
-            context.fillRect(x0 + x, y0 + y, 1, 1);
-        }
+        drawPiece(context, piece, state.pieceIndex, state.pieceColumn, state.pieceRow)
+    }
+
+    // Next piece
+    contextNext.fillStyle = "black";
+    contextNext.fillRect(0, 0, 4, 4);
+    
+    const pieceNext = state.pieceNext;
+    if (pieceNext) {
+        drawPiece(contextNext, pieceNext, state.pieceNextIndex, 0, 3);
     }
 
     for (let spanName in spans) {
