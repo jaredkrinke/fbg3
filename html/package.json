@@ -3,13 +3,16 @@
   "version": "1.0.0",
   "description": "Falling Block Game",
   "main": "index.html",
-  "dependencies": {},
+  "dependencies": {
+    "jquery": "^3.4.1"
+  },
   "scripts": {
     "build": "parcel build --no-source-maps --public-url ./ index.html"
   },
   "author": "Jared Krinke",
   "license": "MIT",
   "devDependencies": {
+    "@types/jquery": "^3.3.31",
     "cssnano": "^4.1.10",
     "typescript": "^3.7.4"
   }

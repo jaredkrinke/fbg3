@@ -587,7 +587,11 @@ export class Replay {
         const self = this;
         this.game.gameAdvanceFrame(function () { return self.nextByteAsInput(); });
     
-        return this.game.isDone();
+        return !this.game.isDone();
+    }
+
+    public getState(): GameState {
+        return this.game.getState();
     }
 
     public seekToEnd(): number {

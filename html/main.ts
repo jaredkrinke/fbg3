@@ -1,4 +1,5 @@
 import * as fbg from "../lib-ts/fbg-lib"
+import "jquery";
 
 const canvas = document.getElementById("canvas") as HTMLCanvasElement;
 const context = canvas.getContext("2d");
@@ -18,12 +19,10 @@ function trace(message: string): void {
     log.appendChild(document.createTextNode(`${message}\n`));
 }
 
-trace("Loading...");
-
-const seeds = crypto.getRandomValues(new Uint32Array(4));
-const mode = fbg.GameMode.endless;
-const initialLevel = 9;
-const game = new fbg.Game(mode, initialLevel, [seeds[0], seeds[1], seeds[2], seeds[3]]);
+// const seeds = crypto.getRandomValues(new Uint32Array(4));
+// const mode = fbg.GameMode.endless;
+// const initialLevel = 9;
+// const game = new fbg.Game(mode, initialLevel, [seeds[0], seeds[1], seeds[2], seeds[3]]);
 
 // TODO: Enum for pieces to ensure this covers the set
 const colors = [
@@ -36,11 +35,10 @@ const colors = [
     "orange",
 ];
 
-function render(): void {
+function render(state: fbg.GameState): void {
     context.fillStyle = "black";
     context.fillRect(0, 0, fbg.boardWidth, fbg.boardHeight);
 
-    const state = game.getState();
     const board = state.board;
     for (let i = 0; i < board.length; i++) {
         const row = board[i];
@@ -103,23 +101,48 @@ for (let item of [ "keydown", "keyup" ]) {
     }, false);
 }
 
-let done = false;
-let updateHandle: number | null = null;
-function update(): void {
-    if (game.isDone()) {
-        if (!done) {
-            done = true;
-            trace("Game over.");
-            clearInterval(updateHandle);
-        }
-    } else {
-        game.gameAdvanceFrame(() => { return inputState; })
-        requestAnimationFrame(render);
+function showReplay(replayString: string) {
+    const replay = new fbg.Replay(replayString);
+    replay.start();
+    
+
+    let done = false;
+    let updateHandle: number | null = null;
+    function renderReplay() {
+        render(replay.getState());
     }
+
+    function update(): void {
+        if (!replay.advanceFrame()) {
+            if (!done) {
+                done = true;
+                trace("Game over.");
+                clearInterval(updateHandle);
+            }
+        }
+    
+        requestAnimationFrame(renderReplay);
+    }
+    
+    
+    const updatePeriodMS = 1000 / 60;
+    updateHandle = setInterval(update, updatePeriodMS);
 }
 
+const apiEndpoint = "http://localhost:8888/.netlify/functions/api"; // Local test server
+function getScoreUrl(mode: number, seed: string) {
+    return `${apiEndpoint}/scores/${encodeURIComponent(mode)}/${encodeURIComponent(seed)}`;
+}
 
-const updatePeriodMS = 1000 / 60;
-updateHandle = setInterval(update, updatePeriodMS);
-
-trace("Loaded.");
+const parameters = new URLSearchParams(window.location.search);
+if (parameters.has("mode") && parameters.has("seed")) {
+    const mode = parseInt(parameters.get("mode"));
+    const seed = parameters.get("seed");
+    $.ajax({
+        method: "GET",
+        url: getScoreUrl(mode, seed),
+        dataType: "json",
+    }).then((data) => {
+        showReplay(data.replay);
+    });
+}

@@ -72,7 +72,7 @@ router.get(Contract.GetScoreRoute, Validize.handle({
                 initials,
                 timestamp: (timestamp as Firebase.firestore.Timestamp).toDate().toISOString(),
                 score,
-                replay: (replay as Buffer).toString("base64"),
+                replay: (replay as Buffer).toString(),
             };
             return result;
         } else {
