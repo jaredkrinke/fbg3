@@ -8,7 +8,6 @@
     },
     "files": [
         "src/api.ts",
-        "src/getreplay.ts",
         "src/addscore.ts",
         "src/topscores.ts"
     ]
