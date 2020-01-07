@@ -6,6 +6,15 @@ import BodyParser from "koa-bodyparser";
 import * as Validize from "validize";
 import * as Contract from "fbg-db-contract";
 import LZString from "lz-string";
+import * as Firebase from "firebase-admin";
+import * as fbc from "fbc";
+import * as sharedData from "shared-data";
+
+// Database integration
+const root = Firebase
+    .initializeApp({ credential: Firebase.credential.cert(fbc as Firebase.ServiceAccount) }, "api")
+    .firestore()
+    .collection(sharedData.collection);
 
 const router = new Router();
 router.prefix("/.netlify/functions/api");
@@ -19,7 +28,29 @@ router.get(
         validateParameters: Validize.createValidator<Contract.TopScoresRequestParameters>({ mode: validateMode }),
         validateQuery: Validize.createValidator<Contract.TopScoresRequestQuery>({ includeSeeds: Validize.createOptionalValidator(Validize.createBooleanValidator(true)) }),
         process: async (request) => {
-            return `Here are the top scores for mode ${request.parameters.mode} (include scores: ${request.query.includeSeeds === true})`;
+            const records = await root
+                .where("mode", "==", request.parameters.mode)
+                .select("initials", "score")
+                .orderBy("score", "desc")
+                .limit(10)
+                .get();
+
+            let response: Contract.TopScoresResponseBody = [];
+            records.forEach(doc => {
+                const data = doc.data();
+                let topScore: Contract.TopScore = {
+                    initials: data.initials,
+                    score: data.score,
+                };
+
+                if (request.query.includeSeeds === true) {
+                    topScore.seed = doc.id;
+                }
+
+                response.push(topScore);
+            });
+
+            return response;
         },
     }));
 

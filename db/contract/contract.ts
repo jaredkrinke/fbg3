@@ -11,6 +11,7 @@ export interface TopScoresRequestQuery {
 export interface TopScore {
     initials: string;
     score: number;
+    seed?: string;
 }
 
 export type TopScoresResponseBody = TopScore[];
