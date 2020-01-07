@@ -22,37 +22,35 @@ router.prefix("/.netlify/functions/api");
 // Top scores
 const validateMode = Validize.createIntegerValidator(1, 3, true);
 
-router.get(
-    Contract.TopScoresRoute,
-    Validize.handle({
-        validateParameters: Validize.createValidator<Contract.TopScoresRequestParameters>({ mode: validateMode }),
-        validateQuery: Validize.createValidator<Contract.TopScoresRequestQuery>({ includeSeeds: Validize.createOptionalValidator(Validize.createBooleanValidator(true)) }),
-        process: async (request) => {
-            const records = await root
-                .where("mode", "==", request.parameters.mode)
-                .select("initials", "score")
-                .orderBy("score", "desc")
-                .limit(10)
-                .get();
+router.get(Contract.TopScoresRoute, Validize.handle({
+    validateParameters: Validize.createValidator<Contract.TopScoresRequestParameters>({ mode: validateMode }),
+    validateQuery: Validize.createValidator<Contract.TopScoresRequestQuery>({ includeSeeds: Validize.createOptionalValidator(Validize.createBooleanValidator(true)) }),
+    process: async (request) => {
+        const records = await root
+            .where("mode", "==", request.parameters.mode)
+            .select("initials", "score")
+            .orderBy("score", "desc")
+            .limit(10)
+            .get();
 
-            let response: Contract.TopScoresResponseBody = [];
-            records.forEach(doc => {
-                const data = doc.data();
-                let topScore: Contract.TopScore = {
-                    initials: data.initials,
-                    score: data.score,
-                };
+        let response: Contract.TopScoresResponseBody = [];
+        records.forEach(doc => {
+            const data = doc.data();
+            let topScore: Contract.TopScore = {
+                initials: data.initials,
+                score: data.score,
+            };
 
-                if (request.query.includeSeeds === true) {
-                    topScore.seed = doc.id;
-                }
+            if (request.query.includeSeeds === true) {
+                topScore.seed = doc.id;
+            }
 
-                response.push(topScore);
-            });
+            response.push(topScore);
+        });
 
-            return response;
-        },
-    }));
+        return response;
+    },
+}));
 
 // Get score
 const validateSeed =  Validize.createStringValidator(/^[0-9a-f]{32}$/);
@@ -104,15 +102,13 @@ const validateAddScoreBody = Validize.createValidator<Contract.AddScoreRequestBo
     },
 })
 
-router.post(
-    Contract.AddScoreRoute,
-    Validize.handle({
-        validateParameters: validateAddScoreParameters,
-        validateBody: validateAddScoreBody,
-        process: async (request) => {
-            console.log(`New score for mode ${request.parameters.mode} by ${request.body.initials} (${request.body.host}): ${request.body.score}\n${request.parameters.seed}\n${request.body.replay}`);
-        },
-    }));
+router.post(Contract.AddScoreRoute, Validize.handle({
+    validateParameters: validateAddScoreParameters,
+    validateBody: validateAddScoreBody,
+    process: async (request) => {
+        console.log(`New score for mode ${request.parameters.mode} by ${request.body.initials} (${request.body.host}): ${request.body.score}\n${request.parameters.seed}\n${request.body.replay}`);
+    },
+}));
 
 // Set up app and handler
 const app = new Koa();
