@@ -147,7 +147,7 @@ function showReplay(replayString: string) {
     updateHandle = setInterval(update, updatePeriodMS);
 }
 
-const apiEndpoint = "http://localhost:8888/.netlify/functions/api"; // Local test server
+const apiEndpoint = "/.netlify/functions/api"; // Local test server
 function getModeUrl(mode: number) {
     return `${apiEndpoint}/scores/${encodeURIComponent(mode)}`;
 }
@@ -181,8 +181,8 @@ if (parameters.has("mode") && parameters.has("seed")) {
     $("#game").hide();
 
     // TODO: Should be 3 different tables...
-    const template = $(".tableRowTemplate").hide();
     for (let mode = 1; mode <= 3; mode++) {
+        const template = $(`#table${mode} .tableRowTemplate`).hide();
         $.ajax({
             method: "GET",
             url: getScoresWithSeedsUrl(mode),
