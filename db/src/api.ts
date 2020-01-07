@@ -54,9 +54,37 @@ router.get(
         },
     }));
 
+// Get score
+const validateSeed =  Validize.createStringValidator(/^[0-9a-f]{32}$/);
+const validateGetScoreParameters = Validize.createValidator<Contract.GetScoreRequestParameters>({
+    mode: validateMode,
+    seed: validateSeed,
+});
+
+router.get(Contract.GetScoreRoute, Validize.handle({
+    validateParameters: validateGetScoreParameters,
+    process: async (request) => {
+        const record = await root.doc(request.parameters.seed).get();
+        if (record.exists) {
+            const { mode, host, initials, score, timestamp, replay } = record.data();
+            const result: Contract.GetScoreResponseBody = {
+                mode,
+                seed: record.id,
+                host,
+                initials,
+                timestamp: (timestamp as Firebase.firestore.Timestamp).toDate().toISOString(),
+                score,
+                replay: (replay as Buffer).toString("base64"),
+            };
+            return result;
+        } else {
+            throw new Validize.NotFoundError("Invalid seed"); // TODO: Make message optional?
+        }
+    },
+}));
+
 // Add score
 const base64Pattern = /^[A-Za-z0-9+/=]*$/;
-const validateSeed =  Validize.createStringValidator(/^[0-9a-f]{32}$/);
 const validateAddScoreParameters = Validize.createValidator<Contract.AddScoreRequestParameters>({
     mode: validateMode,
     seed: validateSeed,

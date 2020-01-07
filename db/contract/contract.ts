@@ -16,6 +16,23 @@ export interface TopScore {
 
 export type TopScoresResponseBody = TopScore[];
 
+// Get a specific score
+export const GetScoreRoute = "/scores/:mode/:seed"; // GET
+export interface GetScoreRequestParameters {
+    mode: number;
+    seed: string;
+}
+
+export interface GetScoreResponseBody {
+    mode: number;
+    seed: string;
+    host: string;
+    initials: string;
+    score: number;
+    timestamp: string;
+    replay: string;
+}
+
 // Add score
 export const AddScoreRoute = "/scores/:mode/:seed"; // POST
 export interface AddScoreRequestParameters {
