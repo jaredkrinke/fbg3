@@ -12,28 +12,16 @@ router.prefix("/.netlify/functions/api");
 
 // Top scores
 const validateMode = Validize.createIntegerValidator(1, 3, true);
-const validateTopScoresParameters = Validize.createValidator<Contract.TopScoresRequestParameters>({
-    mode: validateMode,
-});
-
-const validateTopScoresQuery = Validize.createValidator<Contract.TopScoresRequestQuery>({
-    includeSeeds: Validize.createOptionalValidator(Validize.createBooleanValidator(true)),
-});
 
 router.get(
     Contract.TopScoresRoute,
-    Validize.validate((context) => {
-        context.validated = {
-            parameters: validateTopScoresParameters(context.params),
-            query: validateTopScoresQuery(context.query),
-        };
-    }),
-    (context) => {
-        const parameters: Contract.TopScoresRequestParameters = context.validated.parameters;
-        const query: Contract.TopScoresRequestQuery = context.validated.query;
-        context.status = 200;
-        context.body = `Here are the top scores for mode ${parameters.mode} (include scores: ${query.includeSeeds === true})`;
-    });
+    Validize.handle({
+        validateParameters: Validize.createValidator<Contract.TopScoresRequestParameters>({ mode: validateMode }),
+        validateQuery: Validize.createValidator<Contract.TopScoresRequestQuery>({ includeSeeds: Validize.createOptionalValidator(Validize.createBooleanValidator(true)) }),
+        process: async (request) => {
+            return `Here are the top scores for mode ${request.parameters.mode} (include scores: ${request.query.includeSeeds === true})`;
+        },
+    }));
 
 // Add score
 const base64Pattern = /^[A-Za-z0-9+/=]*$/;
@@ -59,25 +47,18 @@ const validateAddScoreBody = Validize.createValidator<Contract.AddScoreRequestBo
 
 router.post(
     Contract.AddScoreRoute,
-    Validize.validate((context) => {
-        context.validated = {
-            parameters: validateAddScoreParameters(context.params),
-            body: validateAddScoreBody(JSON.parse(context.request.rawBody)),
-        };
-    }),
-    (context) => {
-        const parameters: Contract.AddScoreRequestParameters = context.validated.parameters;
-        const body: Contract.AddScoreRequestBody = context.validated.body;
-
-        context.status = 200;
-        context.body = "";
-        console.log(`New score for mode ${parameters.mode} by ${body.initials} (${body.host}): ${body.score}\n${parameters.seed}\n${body.replay}`);
-    });
+    Validize.handle({
+        validateParameters: validateAddScoreParameters,
+        validateBody: validateAddScoreBody,
+        process: async (request) => {
+            console.log(`New score for mode ${request.parameters.mode} by ${request.body.initials} (${request.body.host}): ${request.body.score}\n${request.parameters.seed}\n${request.body.replay}`);
+        },
+    }));
 
 // Set up app and handler
 const app = new Koa();
 app.use(Cors());
-app.use(BodyParser({ enableTypes: [ "text" ] }));
+app.use(BodyParser({ extendTypes: { json: [ "text/plain" ] } }));
 app.use(router.routes());
 // app.use(router.allowedMethods());
 
