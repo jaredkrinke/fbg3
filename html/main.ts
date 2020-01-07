@@ -1,5 +1,5 @@
 import * as fbg from "../lib-ts/fbg-lib"
-import "jquery";
+declare const $: typeof import("jquery");
 
 const canvas = document.getElementById("canvas") as HTMLCanvasElement;
 const context = canvas.getContext("2d");
@@ -136,6 +136,7 @@ function getScoreUrl(mode: number, seed: string) {
 
 const parameters = new URLSearchParams(window.location.search);
 if (parameters.has("mode") && parameters.has("seed")) {
+    // Replay
     const mode = parseInt(parameters.get("mode"));
     const seed = parameters.get("seed");
     $.ajax({
