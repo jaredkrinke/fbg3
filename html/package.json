@@ -4,7 +4,7 @@
   "description": "Falling Block Game",
   "main": "index.html",
   "dependencies": {
-    "jquery": "^3.4.1"
+    "fbg-db-contract": "../db/contract/dist"
   },
   "scripts": {
     "build": "parcel build --no-source-maps -d ../db/content --public-url ./ index.html",
@@ -13,7 +13,8 @@
   "author": "Jared Krinke",
   "license": "MIT",
   "devDependencies": {
-    "@types/jquery": "^3.3.31",
+    "@types/react": "^16.9.17",
+    "@types/react-dom": "^16.9.4",
     "cssnano": "^4.1.10",
     "typescript": "^3.7.4"
   }

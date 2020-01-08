@@ -3,39 +3,12 @@
     <head>
         <title>Falling Block Game</title>
         <link rel="stylesheet" href="main.css" />
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/react/16.11.0/umd/react.production.min.js" integrity="sha256-Izg5jrIWaZS6OBjRfe9AN/kiiIVYFTgcKukJsfK8Or0=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/16.11.0/umd/react-dom.production.min.js" integrity="sha256-zuSDvIPhgPCvDFw3HdbA58QUOOGxPbs4llUvBOPxvjY=" crossorigin="anonymous"></script>
     </head>
     <body>
         <h1>FBG Spy</h1>
-        <div id="chart">
-            <div class="horizontal" id="table">
-                <table id="table1">
-                    <tr><th colspan="2">Endless</th></tr>
-                    <tr class="tableRowTemplate"><td class="tableInitials"></td><td class="tableScore"></td></tr>
-                </table>
-                <table id="table2">
-                    <tr><th colspan="2">Countdown</th></tr>
-                    <tr class="tableRowTemplate"><td class="tableInitials"></td><td class="tableScore"></td></tr>
-                </table>
-                <table id="table3">
-                    <tr><th colspan="2">Cleanup</th></tr>
-                    <tr class="tableRowTemplate"><td class="tableInitials"></td><td class="tableScore"></td></tr>
-                </table>
-            </div>
-        </div>
-        <div id="game">
-            <div class="horizontal">
-                <canvas id="canvas" width="200" height="400" tabindex="1"></canvas>
-                <div class="vertical">
-                    <p>Next</p>
-                    <canvas id="canvasNext" width="80" height="80"></canvas>
-                </div>
-            </div>
-            <p>Level: <span id="level"></span></p>
-            <p>Lines: <span id="lines"></span></p>
-            <p>Score: <span id="score"></span></p>
-        </div>
-        <pre id="log"></pre>
-        <script src="./main.ts"></script>
+        <div id="root"></div>
+        <script src="./main.tsx"></script>
     </body>
 </html>
