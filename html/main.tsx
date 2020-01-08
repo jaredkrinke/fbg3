@@ -198,13 +198,12 @@ if (parameters.has("mode") && parameters.has("seed")) {
     ReactDOM.render(<Replay seed={parameters.get("seed")}/>, root);
 } else {
     // Leaderboard
-    const gameModeToName: {[key in fbg.GameMode]: string} = {
-        [fbg.GameMode.endless]: "Endless",
-        [fbg.GameMode.countdown]: "Countdown",
-        [fbg.GameMode.cleanup]: "Cleanup",
-    };
+    interface TopScoreTableProps {
+        title: string;
+        mode: fbg.GameMode;
+    }
 
-    class TopScoreTable extends React.Component<{mode: fbg.GameMode}, {rows?: Contract.TopScore[]}> {
+    class TopScoreTable extends React.Component<TopScoreTableProps, {rows?: Contract.TopScore[]}> {
         constructor(props) {
             super(props);
             this.state = {};
@@ -230,7 +229,7 @@ if (parameters.has("mode") && parameters.has("seed")) {
             }
 
             return <table id="table1">
-                <tr><th colSpan={2}>{gameModeToName[this.props.mode]}</th></tr>
+                <tr><th colSpan={2}>{this.props.title}</th></tr>
                 {body}
             </table>;
         }
@@ -238,9 +237,9 @@ if (parameters.has("mode") && parameters.has("seed")) {
 
     function Leaderboard() {
         return <div className="horizontal" id="table">
-            <TopScoreTable mode={fbg.GameMode.endless}></TopScoreTable>
-            <TopScoreTable mode={fbg.GameMode.countdown}></TopScoreTable>
-            <TopScoreTable mode={fbg.GameMode.cleanup}></TopScoreTable>
+            <TopScoreTable title="Endless" mode={fbg.GameMode.endless}></TopScoreTable>
+            <TopScoreTable title="Countdown" mode={fbg.GameMode.countdown}></TopScoreTable>
+            <TopScoreTable title="Cleanup" mode={fbg.GameMode.cleanup}></TopScoreTable>
         </div>
     }
 
