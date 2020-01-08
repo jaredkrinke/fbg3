@@ -1,6 +1,5 @@
 import * as fbg from "../lib-ts/fbg-lib"
 import * as Contract from "fbg-db-contract";
-import { ReactPropTypes } from "react";
 declare const React: typeof import("react");
 declare const ReactDOM: typeof import("react-dom");
 
