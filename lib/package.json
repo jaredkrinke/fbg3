@@ -17,6 +17,6 @@
   },
   "dependencies": {
     "lz-string": "^1.4.4",
-    "xorwow-js": "https://github.com/jaredkrinke/xorwow-js.git"
+    "xorwow-js": "https://github.com/jaredkrinke/modules.git#xorwow-js-3.0.1"
   }
 }
